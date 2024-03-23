@@ -77,7 +77,6 @@ async def get_last_students(last_name : str, db: Session = Depends(get_db)):
 @app.post("/api/student/{first}/{last}/{grade}/{review}")
 async def add_student(first : str, last : str, grade : int, review : str, db : Session = Depends(get_db)):
 
-    
     newStudent = Student(first_name=first, last_name=last, grade_number=grade, review=review)
 
     new_student = DBModels.models.Student()
@@ -86,7 +85,6 @@ async def add_student(first : str, last : str, grade : int, review : str, db : S
     new_student.review = newStudent.review
     new_student.grade_num = newStudent.grade_number
     new_student.review_list = newStudent.review_list
-
 
     db.add(new_student)
     db.commit()
