@@ -1,23 +1,18 @@
-from fastapi import FastAPI, HTTPException, Depends, Query, Path
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-
-
-from APIModels.models import Student, Review, updatedStudent
-from typing import List, Optional, Annotated
-
 import DBModels.models
-
-from database import engine, SessionLocal
-from sqlalchemy.orm import Session
-
+from database import engine
 import studentAPI
 
+# to use FastAPI
 app = FastAPI()
 
+# accessing frontend
 origins = [
     "http://localhost:3000"
 ]
 
+# used to connect frontend to backend
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -28,8 +23,5 @@ app.add_middleware(
 
 DBModels.models.Base.metadata.create_all(bind=engine)
 
+# allows the router to work
 app.include_router(studentAPI.router)
-
-@app.get("/")
-async def base():
-    return {"base"}

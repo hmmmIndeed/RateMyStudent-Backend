@@ -1,20 +1,16 @@
 from fastapi import FastAPI, HTTPException, Depends, APIRouter
 from fastapi.middleware.cors import CORSMiddleware
-
-
 from APIModels.models import Student, Review, updatedStudent
 from typing import List, Optional
-
 import DBModels.models
-
 from database import engine, SessionLocal
 from sqlalchemy.orm import Session
 
-
+# allows the router to be used
 router = APIRouter()
 
 
-
+# gets the database from SQL
 def get_db():
     try:
         db = SessionLocal()
@@ -22,12 +18,12 @@ def get_db():
     finally:
         db.close()
 
-
-#Gets all the students
+# gets all the students
 @router.get("/api/student")
 async def get_all_students(db: Session = Depends(get_db)):
     return db.query(DBModels.models.Student).all()
 
+# gets the student with the specific id
 @router.get("/api/student/{id}")
 async def get_student_review(id : int, db: Session = Depends(get_db)):
 
@@ -50,16 +46,15 @@ async def get_student_review(id : int, db: Session = Depends(get_db)):
     return reviews
 
 
-#Gets all the students with the same first name
+# gets all the students with the same first name
 @router.get("/api/student/{first_name}")
 async def get_first_students(first_name : str, db: Session = Depends(get_db)):
 
     students = db.query(DBModels.models.Student).filter(DBModels.models.Student.first_name == first_name).all()
 
-
     return students 
 
-#Gets all the students with the same last name
+# gets all the students with the same last name
 @router.get("/api/student/{last_name}")
 async def get_last_students(last_name : str, db: Session = Depends(get_db)):
 
@@ -67,6 +62,7 @@ async def get_last_students(last_name : str, db: Session = Depends(get_db)):
 
     return students 
 
+# gets all the students with the same last name
 @router.get("/api/student/{last_name}")
 async def get_last_students(last_name : str, db: Session = Depends(get_db)):
 
@@ -74,6 +70,7 @@ async def get_last_students(last_name : str, db: Session = Depends(get_db)):
 
     return students 
 
+# gets all the reviews of one subject for the student with the specific id
 @router.get("/api/student/{id}/{subject}")
 async def get_review_via_tags(id : int, subject : str, db: Session = Depends(get_db)):
 
@@ -85,10 +82,9 @@ async def get_review_via_tags(id : int, subject : str, db: Session = Depends(get
         if review.review_subject == subject:
             filtered_list.append(review)
 
-
     return filtered_list
 
-#
+# adds a student to the database with their grade level
 @router.post("/api/student/{first}/{last}/{grade}")
 async def add_student(first : str, 
                       last : str, 
@@ -103,17 +99,16 @@ async def add_student(first : str,
     new_student.grade_num = newStudent.grade_number
     new_student.review_list = newStudent.review_list
 
-
     db.add(new_student)
     db.commit()
                                                
     return newStudent
 
 
-#Updates a student's grade
+# updates a student's details
 @router.post("/api/student/{id}/{review_dec}/{review_rate}/{review_sub}/{method}/{work}/{exam}/{behavoir}/{participation}/{grade}/{teacher}")
 async def add_review(id : int, review_dec : str, review_rate : int, review_sub : str, 
-                     method : int, 
+                     method : str, 
                      work : int, 
                      exam : int, 
                      behavoir : int, 
@@ -147,15 +142,14 @@ async def add_review(id : int, review_dec : str, review_rate : int, review_sub :
 
     student.review_list.append(new_review)
 
-    
-
     db.refresh(student)
 
     db.add(student)
     db.commit()
 
     return new_review
-    
+
+# updates a review
 @router.put("/api/student/{id}/{review_id}/{new_text}")
 async def edit_review(id : int, review_id : int, new_text : str,
                      db : Session = Depends(get_db)):
@@ -168,7 +162,6 @@ async def edit_review(id : int, review_id : int, new_text : str,
             detail="student not found"
         )
     
-    
     new_review = None
     for review in student.review_list:
         if review.id == review_id:  # Assuming review has an 'id' attribute
@@ -179,7 +172,6 @@ async def edit_review(id : int, review_id : int, new_text : str,
             status_code=404,
             detail="Review not found"
         )
-    
     
     new_review.review_description = new_text
 
@@ -192,6 +184,7 @@ async def edit_review(id : int, review_id : int, new_text : str,
 
     return new_review
 
+# deletes a student with the specific id
 @router.delete("/api/student/{id}")
 async def delete_student(id : int, db : Session = Depends(get_db)):
 
@@ -203,13 +196,13 @@ async def delete_student(id : int, db : Session = Depends(get_db)):
             detail="student not found"
         )
 
-
     db.query(DBModels.models.Student).filter(DBModels.models.Student.id == id).delete()
 
     db.commit()
     
     return {"successful"}
 
+# removes a review of a student
 @router.delete("/api/student/{id}/{post_id}")
 async def delete_review(id :int, review_id : int, db : Session = Depends(get_db)):
 
@@ -221,7 +214,6 @@ async def delete_review(id :int, review_id : int, db : Session = Depends(get_db)
             detail="student not found"
         )
     
-
     delete_review = None
     for review in student.review_list:
         if review.id == review_id:  
