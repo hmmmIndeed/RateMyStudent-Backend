@@ -71,6 +71,7 @@ async def get_first_students(first_name : str, db: Session = Depends(get_db)):
 
     students = db.query(DBModels.models.Student).filter(DBModels.models.Student.first_name == first_name).all()
 
+
     return students 
 
 #Gets all the students with the same last name
@@ -81,6 +82,29 @@ async def get_last_students(last_name : str, db: Session = Depends(get_db)):
 
     return students 
 
+@app.get("/api/student/{last_name}")
+async def get_last_students(last_name : str, db: Session = Depends(get_db)):
+
+    students = db.query(DBModels.models.Student).filter(DBModels.models.Student.last_name == last_name).all()
+
+    return students 
+
+@app.get("/api/student/{id}/{subject}")
+async def get_review_via_tags(id : int, subject : str, db: Session = Depends(get_db)):
+
+    students = db.query(DBModels.models.Student).filter(DBModels.models.Student.id == id).first()
+
+    filtered_list = []
+
+    for review in students.review_list:
+        if review.review_subject == subject:
+            filtered_list.append(review)
+
+
+    return filtered_list
+
+
+@app.get("/api/student/{id}/{subject}")
 
 #
 @app.post("/api/student/{first}/{last}/{grade}")
