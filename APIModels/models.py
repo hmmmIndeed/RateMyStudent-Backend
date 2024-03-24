@@ -12,6 +12,7 @@ class Review(BaseModel):
     teamwork : int
     exam_taking : int
     class_behavior : int
+    participation_level : int
 
     overall_grade : str
 
@@ -27,8 +28,7 @@ class Student(BaseModel):
 
 
 class updatedStudent(BaseModel):
-
-    #grade_number: Optional[int]
+    
     new_review : str
 
 

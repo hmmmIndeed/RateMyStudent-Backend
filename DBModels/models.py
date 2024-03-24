@@ -16,6 +16,7 @@ class Review(Base):
     exam_taking = Column(Integer)
     class_behavior = Column(Integer)
     overall_grade = Column(String)
+    participation_level = Column(Integer)
 
     teacher_name = Column(String)
 

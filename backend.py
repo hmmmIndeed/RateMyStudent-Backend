@@ -1,9 +1,9 @@
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import FastAPI, HTTPException, Depends, Query, Path
 from fastapi.middleware.cors import CORSMiddleware
 
 
 from APIModels.models import Student, Review, updatedStudent
-from typing import List, Optional
+from typing import List, Optional, Annotated
 
 import DBModels.models
 
@@ -103,19 +103,18 @@ async def get_review_via_tags(id : int, subject : str, db: Session = Depends(get
 
     return filtered_list
 
-
-@app.get("/api/student/{id}/{subject}")
-
 #
 @app.post("/api/student/{first}/{last}/{grade}")
-async def add_student(first : str, last : str, grade : int, db : Session = Depends(get_db)):
+async def add_student(first : str, 
+                      last : str, 
+                      grade : int,
+                      db : Session = Depends(get_db)):
 
     newStudent = Student(first_name=first, last_name=last, grade_number=grade)
 
     new_student = DBModels.models.Student()
     new_student.first_name = newStudent.first_name
     new_student.last_name = newStudent.last_name
-    #new_student.review = newStudent.review
     new_student.grade_num = newStudent.grade_number
     new_student.review_list = newStudent.review_list
 
@@ -127,24 +126,17 @@ async def add_student(first : str, last : str, grade : int, db : Session = Depen
 
 
 #Updates a student's grade
-@app.put("/api/student/{id}/{review_dec}/{review_rate}/{review_sub}/{method}/{work}/{exam}/{behavoir}")
+@app.post("/api/student/{id}/{review_dec}/{review_rate}/{review_sub}/{method}/{work}/{exam}/{behavoir}/{participation}/{grade}/{teacher}")
 async def add_review(id : int, review_dec : str, review_rate : int, review_sub : str, 
                      method : int, 
                      work : int, 
                      exam : int, 
                      behavoir : int, 
+                     participation : int,
                      grade: str,
                      teacher : str,
                      db : Session = Depends(get_db)):
 
-    #aStudent = updatedStudent(new_review=reviews)
-    #study_method : int
-    #teamwork : int
-    #exam_taking : int
-    #class_behavior : int
-#
-    #overall_grade : str
-    #updates the student here
     student = db.query(DBModels.models.Student).filter(DBModels.models.Student.id == id).first()
 
     if student == None:
@@ -161,13 +153,12 @@ async def add_review(id : int, review_dec : str, review_rate : int, review_sub :
     teamwork = work,
     exam_taking = exam,
     class_behavior = behavoir,
+    participation_level = participation,
 
     overall_grade = grade,
     teacher_name = teacher,
 
     student_id= id)
-
-    #return new_review
 
     student.review_list.append(new_review)
 
@@ -180,6 +171,41 @@ async def add_review(id : int, review_dec : str, review_rate : int, review_sub :
 
     return new_review
     
+@app.put("/api/student/{id}/{review_id}/{new_text}")
+async def edit_review(id : int, review_id : int, new_text : str,
+                     db : Session = Depends(get_db)):
+
+    student = db.query(DBModels.models.Student).filter(DBModels.models.Student.id == id).first()
+
+    if student == None:
+        raise HTTPException(
+            status_code=404,
+            detail="student not found"
+        )
+    
+    
+    new_review = None
+    for review in student.review_list:
+        if review.id == review_id:  # Assuming review has an 'id' attribute
+            new_review = review
+            break
+    else:
+        raise HTTPException(
+            status_code=404,
+            detail="Review not found"
+        )
+    
+    
+    new_review.review_description = new_text
+
+    student.review_list.append(new_review)
+
+    db.refresh(student)
+
+    db.add(student)
+    db.commit()
+
+    return new_review
 
 @app.delete("/api/student/{id}")
 async def delete_student(id : int, db : Session = Depends(get_db)):
@@ -199,3 +225,34 @@ async def delete_student(id : int, db : Session = Depends(get_db)):
     
     return {"successful"}
 
+@app.delete("/api/student/{id}/{post_id}")
+async def delete_review(id :int, review_id : int, db : Session = Depends(get_db)):
+
+    student = db.query(DBModels.models.Student).filter(DBModels.models.Student.id == id).first()
+
+    if student == None:
+        raise HTTPException(
+            status_code=404,
+            detail="student not found"
+        )
+    
+
+    delete_review = None
+    for review in student.review_list:
+        if review.id == review_id:  
+            delete_review = review
+            break
+    else:
+        raise HTTPException(
+            status_code=404,
+            detail="Review not found"
+        )
+    
+    student.review_list.remove(delete_review)
+
+    #db.refresh(student)
+
+    #db.commit()
+    
+    return {"Popped Review!!!!! :3"}
+    
