@@ -43,7 +43,7 @@ async def base():
 async def get_all_students(db: Session = Depends(get_db)):
     return db.query(DBModels.models.Student).all()
 
-@app.get("/api/student/{id}")
+@app.get("/api/student/review/{id}")
 async def get_student_review(id : int, db: Session = Depends(get_db)):
 
     students = db.query(DBModels.models.Student).filter(DBModels.models.Student.id == id).first()
@@ -64,6 +64,12 @@ async def get_student_review(id : int, db: Session = Depends(get_db)):
 
     return reviews
 
+@app.get("/api/student/{id}")
+async def get_student_id(id : int, db: Session = Depends(get_db)):
+
+    student = db.query(DBModels.models.Student).filter(DBModels.models.Student.id == id).first()
+
+    return student
 
 #Gets all the students with the same first name
 @app.get("/api/student/{first_name}")
@@ -126,9 +132,10 @@ async def add_student(first : str,
 
 
 #Updates a student's grade
+#http://localhost:8000/api/student/1/foolishness/3/Writing/foolishness/5/3/2/4/sd/hehehe
 @app.post("/api/student/{id}/{review_dec}/{review_rate}/{review_sub}/{method}/{work}/{exam}/{behavoir}/{participation}/{grade}/{teacher}")
 async def add_review(id : int, review_dec : str, review_rate : int, review_sub : str, 
-                     method : int, 
+                     method : str, 
                      work : int, 
                      exam : int, 
                      behavoir : int, 

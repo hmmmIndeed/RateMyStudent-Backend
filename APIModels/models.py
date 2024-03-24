@@ -8,7 +8,7 @@ class Review(BaseModel):
     review_rating: int
     review_subject: Optional[str]
 
-    study_method : int
+    study_method : str
     teamwork : int
     exam_taking : int
     class_behavior : int
@@ -28,7 +28,7 @@ class Student(BaseModel):
 
 
 class updatedStudent(BaseModel):
-    
+
     new_review : str
 
 

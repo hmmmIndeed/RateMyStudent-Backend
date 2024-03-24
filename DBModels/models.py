@@ -11,7 +11,7 @@ class Review(Base):
     review_rating = Column(String)
     review_subject = Column(String)
 
-    study_method = Column(Integer)
+    study_method = Column(String)
     teamwork = Column(Integer)
     exam_taking = Column(Integer)
     class_behavior = Column(Integer)
