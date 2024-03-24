@@ -33,9 +33,6 @@ def get_db():
     finally:
         db.close()
 
-#db: List[Student] = []
-
-
 
 @app.get("/")
 async def base():
@@ -51,7 +48,19 @@ async def get_student_review(id : int, db: Session = Depends(get_db)):
 
     students = db.query(DBModels.models.Student).filter(DBModels.models.Student.id == id).first()
 
+    if students == None:
+        raise HTTPException(
+            status_code=404,
+            detail="student not found"
+        )
+
     reviews = students.review_list
+
+    if reviews == None:
+        raise HTTPException(
+            status_code=404,
+            detail="reviews not found"
+        )
 
     return reviews
 
@@ -74,17 +83,18 @@ async def get_last_students(last_name : str, db: Session = Depends(get_db)):
 
 
 #
-@app.post("/api/student/{first}/{last}/{grade}/{review}")
-async def add_student(first : str, last : str, grade : int, review : str, db : Session = Depends(get_db)):
+@app.post("/api/student/{first}/{last}/{grade}")
+async def add_student(first : str, last : str, grade : int, db : Session = Depends(get_db)):
 
-    newStudent = Student(first_name=first, last_name=last, grade_number=grade, review=review)
+    newStudent = Student(first_name=first, last_name=last, grade_number=grade)
 
     new_student = DBModels.models.Student()
     new_student.first_name = newStudent.first_name
     new_student.last_name = newStudent.last_name
-    new_student.review = newStudent.review
+    #new_student.review = newStudent.review
     new_student.grade_num = newStudent.grade_number
     new_student.review_list = newStudent.review_list
+
 
     db.add(new_student)
     db.commit()
@@ -93,11 +103,23 @@ async def add_student(first : str, last : str, grade : int, review : str, db : S
 
 
 #Updates a student's grade
-@app.put("/api/student/{id}/{review_dec}/{review_rate}/{review_sub}")
-async def add_review(id : int, review_dec : str, review_rate : int, review_sub : str, db : Session = Depends(get_db)):
+@app.put("/api/student/{id}/{review_dec}/{review_rate}/{review_sub}/{method}/{work}/{exam}/{behavoir}")
+async def add_review(id : int, review_dec : str, review_rate : int, review_sub : str, 
+                     method : int, 
+                     work : int, 
+                     exam : int, 
+                     behavoir : int, 
+                     grade: str,
+                     teacher : str,
+                     db : Session = Depends(get_db)):
 
     #aStudent = updatedStudent(new_review=reviews)
-
+    #study_method : int
+    #teamwork : int
+    #exam_taking : int
+    #class_behavior : int
+#
+    #overall_grade : str
     #updates the student here
     student = db.query(DBModels.models.Student).filter(DBModels.models.Student.id == id).first()
 
@@ -110,6 +132,15 @@ async def add_review(id : int, review_dec : str, review_rate : int, review_sub :
     new_review = DBModels.models.Review(review_description = review_dec,
     review_rating = review_rate,
     review_subject = review_sub,
+
+    study_method = method,
+    teamwork = work,
+    exam_taking = exam,
+    class_behavior = behavoir,
+
+    overall_grade = grade,
+    teacher_name = teacher,
+
     student_id= id)
 
     #return new_review
@@ -123,7 +154,7 @@ async def add_review(id : int, review_dec : str, review_rate : int, review_sub :
     db.add(student)
     db.commit()
 
-    return student
+    return new_review
     
 
 @app.delete("/api/student/{id}")
