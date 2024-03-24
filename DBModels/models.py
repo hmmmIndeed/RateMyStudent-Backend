@@ -1,7 +1,6 @@
 from sqlalchemy import Integer, Column, String, ForeignKey
 from typing import List
 from sqlalchemy.orm import relationship, Mapped, mapped_column
-from sqlalchemy.ext.declarative import declarative_base
  
 from database import Base
 
@@ -12,8 +11,14 @@ class Review(Base):
     review_rating = Column(String)
     review_subject = Column(String)
 
-    #student_id = Column(Integer, ForeignKey('user.id'))
-    #student = relationship("Student", back_populates="review_list")
+    study_method = Column(Integer)
+    teamwork = Column(Integer)
+    exam_taking = Column(Integer)
+    class_behavior = Column(Integer)
+    overall_grade = Column(String)
+    participation_level = Column(Integer)
+
+    teacher_name = Column(String)
 
     student_id: Mapped[int] = mapped_column(ForeignKey("student.id"))
     student: Mapped["Student"] = relationship(back_populates="review_list")
@@ -25,7 +30,7 @@ class Student(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     first_name = Column(String)
     last_name = Column(String)
-    review = Column(String)
+    #eview = Column(String)
     grade_num = Column(Integer)
 
 
