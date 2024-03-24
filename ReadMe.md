@@ -42,23 +42,23 @@ Running the backend
     navigate to main.py and run the file
 
 
-#Frontend
+# Frontend
 Prerequisites for Running the Frontend
 
-##NPM
+## NPM
 NPM is needed to run the frontend part of RateMyStudent. To install npm, follow these steps:
 1. Visit https://nodejs.org/en/download
 2. Download the lts version of the installer
 3. Run the installer
 
-##Running the Frontend
+## Running the Frontend
 1. Using an IDE of your choice, open up the project folder
 2. Open up a terminal instance
 3. Access the frontend folder by running
 ```cd frontend```
    in the terminal
 
-##Installing the Dependencies
+## Installing the Dependencies
 
 Inside of rateMyStudent/frontend, run the following commands
 
