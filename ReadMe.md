@@ -42,34 +42,34 @@ Running the backend
     navigate to main.py and run the file
 
 
-Frontend
+#Frontend
 Prerequisites for Running the Frontend
 
-NPM
+##NPM
 NPM is needed to run the frontend part of RateMyStudent. To install npm, follow these steps:
-1. visit https://nodejs.org/en/download
-2. download the lts version of the installer
-3. run the installer
+1. Visit https://nodejs.org/en/download
+2. Download the lts version of the installer
+3. Run the installer
 
-Running the Frontend
+##Running the Frontend
 1. Using an IDE of your choice, open up the project folder
 2. Open up a terminal instance
 3. Access the frontend folder by running
 ```cd frontend```
    in the terminal
 
-Installing the dependencies
+##Installing the Dependencies
 
-inside of rateMyStudent/frontend, run the following commands
+Inside of rateMyStudent/frontend, run the following commands
 
-```npm install```
-```npm install react-router-dom```
-```npm install axios```
+    npm install
+    npm install react-router-dom
+    npm install axios
 
 
 Once those dependencies are done, you will be able to sucessfully run the frontend part of the application. However, before you launch it,
 ensure that the backend server, backend/main.py is running in another terminal. Once you have verified that the backend server, run the following command:
-```npm start```
+    npm start
 
 A browser should automatically open with the application running!
 
